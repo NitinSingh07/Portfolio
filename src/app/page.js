@@ -103,14 +103,6 @@ const EXPERIENCE = [
   },
 ]
 
-const EDUCATION = {
-  school: 'Indian Institute of Information Technology (IIIT) Una',
-  location: 'Una, Himachal Pradesh',
-  degree: 'B.Tech in Electronics and Communication Engineering',
-  cgpa: '8.2 / 10',
-  period: '2022 \u2014 2026',
-}
-
 const SKILLS = {
   Languages: ['C', 'C++', 'JavaScript', 'TypeScript', 'HTML5', 'CSS3'],
   Frameworks: ['React.js', 'Next.js', 'Node.js', 'Express.js', 'TanStack Query', 'GraphQL', 'jQuery'],
@@ -457,15 +449,11 @@ function ProjectCard({ p, i }) {
   const onLeave = () => { mx.set(0); my.set(0) }
 
   return (
-    <motion.a
-      href={p.href}
-      target="_blank"
-      rel="noreferrer"
+    <motion.div
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      initial={{ opacity: 0, y: 40 }
-      }
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.7, delay: i * 0.08 }}
@@ -488,8 +476,17 @@ function ProjectCard({ p, i }) {
               {p.name}
             </h3 >
           </div >
-          <div className="h-11 w-11 grid place-items-center rounded-full border border-border/60 group-hover:bg-foreground group-hover:text-background transition-colors">
-            < ArrowUpRight className="h-4 w-4 transition-transform group-hover:rotate-12" />
+          <div className="flex items-center gap-2 relative z-20">
+            {p.github && (
+              <a href={p.github} target="_blank" rel="noreferrer" aria-label="GitHub Repository" className="h-11 w-11 grid place-items-center rounded-full border border-border/60 bg-secondary/50 hover:bg-foreground hover:text-background transition-colors">
+                <Github className="h-4 w-4" />
+              </a>
+            )}
+            {p.live && (
+              <a href={p.live} target="_blank" rel="noreferrer" aria-label="Live Project" className="h-11 w-11 grid place-items-center rounded-full border border-border/60 bg-secondary/50 hover:bg-foreground hover:text-background transition-colors">
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
           </div >
         </div >
 
@@ -519,7 +516,7 @@ function ProjectCard({ p, i }) {
           }
         </div >
       </div >
-    </motion.a >
+    </motion.div >
   )
 }
 
@@ -786,10 +783,96 @@ function Footer() {
   )
 }
 
+function ScrollZigZag() {
+  const { scrollYProgress } = useScroll()
+  const pathLength = useSpring(scrollYProgress, { stiffness: 80, damping: 25 })
+  const svgRef = useRef(null)
+  const pathRef = useRef(null)
+  const dotX = useMotionValue(0)
+  const dotY = useMotionValue(0)
+
+  // Very spread out, wildly organic path — only 5 sweeps across the whole page
+  const path = [
+    'M 50 0',
+    'C 110 30, -15 80, 92 150',
+    'C 120 200, -20 260, 8 350',
+    'C -10 420, 115 440, 85 550',
+    'C 110 620, -20 680, 12 750',
+    'C -25 830, 105 880, 50 1000',
+  ].join(' ')
+
+  useEffect(() => {
+    const pathEl = pathRef.current
+    if (!pathEl) return
+    const totalLen = pathEl.getTotalLength()
+
+    const unsubscribe = pathLength.on('change', (v) => {
+      const pt = pathEl.getPointAtLength(v * totalLen)
+      dotX.set(pt.x)
+      dotY.set(pt.y)
+    })
+    return unsubscribe
+  }, [pathLength, dotX, dotY])
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[1]">
+      <svg
+        ref={svgRef}
+        className="w-full h-full"
+        viewBox="0 0 100 1000"
+        preserveAspectRatio="none"
+        fill="none"
+      >
+        {/* Faint background path */}
+        <path
+          d={path}
+          stroke="hsl(var(--foreground) / 0.04)"
+          strokeWidth="0.3"
+        />
+        {/* Gradient-filled progress path */}
+        <motion.path
+          ref={pathRef}
+          d={path}
+          stroke="url(#zigzag-grad)"
+          strokeWidth="0.6"
+          style={{ pathLength }}
+          strokeLinecap="round"
+        />
+        <defs>
+          <linearGradient id="zigzag-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.5" />
+            <stop offset="50%" stopColor="#d946ef" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.3" />
+          </linearGradient>
+        </defs>
+        {/* Glowing dot */}
+        <motion.circle
+          cx={dotX}
+          cy={dotY}
+          r="2.5"
+          fill="#d946ef"
+          filter="url(#glow)"
+        />
+        <motion.circle cx={dotX} cy={dotY} r="1" fill="white" />
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
+    </div>
+  )
+}
+
 // ------------------------------ Page ------------------------------
 function App() {
   return (
     <main className="relative min-h-screen bg-background text-foreground overflow-x-clip">
+      <ScrollZigZag />
       < Navbar />
       <Hero />
       <MarqueeRow />
