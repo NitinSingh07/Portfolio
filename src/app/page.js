@@ -68,16 +68,16 @@ const PROJECTS = [
 
 const EXPERIENCE = [
   {
-    company: 'Security Platform',
+    company: 'CloudSEK',
     role: 'Software Engineering Intern',
-    period: '2025',
+    period: 'Dec 2025 \u2014 March 2026 ',
     location: 'Remote',
     bullets: [
       'Spearheaded development of the Peer Comparison feature end-to-end, enabling 500+ organizations to benchmark security posture against industry peers using standardized security metrics \u2014 improving risk visibility by 30%.',
       'Integrated automated PDF security report generation via a template engine and RESTful APIs.',
       'Resolved 75+ production defects and daily bugs; performed label and UI optimizations to enhance usability, stability and reliability across live environments.',
     ],
-    tags: ['REST APIs', 'PDF Engine', 'Production Bugs', 'UI Polish'],
+    tags: ['REST APIs', 'PDF Engine', 'Production Defects', 'Daily Bugs', 'UI Polish', 'Next.js', 'Typescript'],
   },
   {
     company: 'BrandContext',
@@ -88,7 +88,7 @@ const EXPERIENCE = [
       'Enhanced 5 dashboards for a real-time analytics platform in collaboration with Google \u2014 decreasing page load times by 25%.',
       'Optimized interactive data visualization modules used by retail teams, reducing data load time by 40% and improving operational decisions across 100+ store locations.',
     ],
-    tags: ['Analytics', 'Dashboards', 'Performance', 'Data Viz'],
+    tags: ['UI Optimisation', 'Next.js', 'Reaect.js', 'Tailwind', 'Typescript', 'Dashboards', 'Performance'],
   },
   {
     company: 'Cograd',
@@ -99,7 +99,7 @@ const EXPERIENCE = [
       'Architected and delivered an ERP system for student onboarding, fee management, result processing, teacher onboarding, and geo-based attendance \u2014 improving workflow efficiency by 35%.',
       'Contributed scalable features to a production-grade platform showcased on Shark Tank India Season 4 and assisted in real-world deployment readiness.',
     ],
-    tags: ['Full Stack', 'ERP', 'Shark Tank India', 'Deployment'],
+    tags: ['Full Stack', 'ERP', 'Reaect.js', 'Tailwind', 'Typescript', 'UI Optimisation', 'Shark Tank India', 'Deployment'],
   },
 ]
 
@@ -317,8 +317,8 @@ function Hero() {
           >
             {
               [
+                { k: '3', v: 'Internships Completed' },
                 { k: '15+', v: 'Projects shipped' },
-                { k: '6+', v: 'Production stacks' },
                 { k: 'AWS', v: 'EC2 · RDS · S3' },
                 { k: '∞', v: 'Cups of chai' },
               ].map((s) => (
@@ -551,6 +551,90 @@ function Projects() {
   )
 }
 
+function ExperienceCard({ e, i }) {
+  const ref = useRef(null)
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const rx = useSpring(useTransform(my, [-50, 50], [6, -6]), { stiffness: 200, damping: 20 })
+  const ry = useSpring(useTransform(mx, [-50, 50], [-6, 6]), { stiffness: 200, damping: 20 })
+
+  const onMove = (event) => {
+    const r = ref.current.getBoundingClientRect()
+    mx.set(event.clientX - r.left - r.width / 2)
+    my.set(event.clientY - r.top - r.height / 2)
+  }
+  const onLeave = () => { mx.set(0); my.set(0) }
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.7, delay: i * 0.08 }}
+      style={{ rotateX: rx, rotateY: ry, transformPerspective: 1000 }}
+      className="group relative block overflow-hidden rounded-3xl border border-border/60 bg-card/50 backdrop-blur p-8 md:p-10 transition-colors hover:border-border"
+    >
+      <div className="relative">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+              <span>{e.period}</span>
+              <span className="opacity-50">·</span>
+              <span>{e.location}</span>
+            </div>
+            <h3 className="mt-3 text-2xl md:text-3xl font-medium tracking-tight">
+              {e.role} <span className="text-muted-foreground">@ {e.company}</span>
+            </h3>
+          </div>
+          <div className="h-11 w-11 shrink-0 grid place-items-center rounded-full border border-border/60 bg-secondary text-muted-foreground group-hover:bg-foreground group-hover:text-background transition-colors">
+            <Briefcase className="h-4 w-4" />
+          </div>
+        </div>
+
+        <ul className="mt-6 space-y-3">
+          {e.bullets.map((b, idx) => (
+            <li key={idx} className="flex gap-3 text-[15px] text-muted-foreground leading-relaxed">
+              <ChevronRight className="h-4 w-4 mt-1 text-foreground/60 shrink-0" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-8 flex flex-wrap gap-2">
+          {e.tags.map((t) => (
+            <span key={t} className="rounded-full border border-border/60 bg-background/40 backdrop-blur px-3 py-1.5 text-xs font-mono text-muted-foreground">
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+function Experience() {
+  return (
+    <section id="experience" className="relative py-32 px-6">
+      <div className="mx-auto max-w-4xl">
+        <SectionLabel num="03">Experience</SectionLabel>
+        <div className="mb-12">
+          <h2 className="text-balance text-3xl md:text-5xl font-medium tracking-tight">
+            Where I've <span className="font-serif italic text-foreground/80">worked</span>.
+          </h2>
+        </div>
+        <div className="flex flex-col gap-6">
+          {EXPERIENCE.map((e, i) => (
+            <ExperienceCard key={i} e={e} i={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 const SKILL_ICONS = {
   Languages: Code2,
   Frameworks: Layers,
@@ -563,7 +647,7 @@ function Skills() {
   return (
     <section id="skills" className="relative py-32 px-6">
       <div className="mx-auto max-w-6xl">
-        <SectionLabel num="03">Toolkit</SectionLabel>
+        <SectionLabel num="05">Toolkit</SectionLabel>
         <div className="mb-12 flex flex-wrap items-end justify-between gap-4">
           <h2 className="text-balance text-3xl md:text-5xl font-medium tracking-tight">
             The stack I <span className="font-serif italic text-foreground/80">reach for</span>.
@@ -619,7 +703,7 @@ function Contact() {
         < div className="absolute inset-0 bg-grid bg-grid-fade opacity-50" />
       </div>
       <div className="mx-auto max-w-4xl text-center">
-        < SectionLabel num="04">Get in touch</SectionLabel>
+        < SectionLabel num="06">Get in touch</SectionLabel>
         < motion.h2
           initial={{ opacity: 0, y: 20 }
           }
@@ -711,6 +795,7 @@ function App() {
       <MarqueeRow />
       <About />
       <Projects />
+      <Experience />
       <Skills />
       <Contact />
       <Footer />
