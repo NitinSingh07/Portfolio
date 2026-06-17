@@ -1,20 +1,23 @@
 'use client'
-
 import { useEffect, useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import {
   ArrowUpRight, Github, Linkedin, Mail, Moon, Sun, Sparkles, MapPin,
-  Code2, Cloud, Database, Wrench, Palette, Layers, Zap, ArrowRight, ChevronRight
+  Code2, Cloud, Database, Wrench, Palette, Layers, Zap, ArrowRight, ChevronRight, Briefcase, GraduationCap, ExternalLink
 } from 'lucide-react'
 
+const HeroScene = dynamic(() => import('@/components/hero-scene'), { ssr: false, loading: () => null })
 // ------------------------------ Data ------------------------------
 const NAV = [
   { label: 'Work', href: '#work' },
+  { label: 'Experience', href: '#experience' },
   { label: 'About', href: '#about' },
   { label: 'Skills', href: '#skills' },
   { label: 'Contact', href: '#contact' },
 ]
+
 
 const PROJECTS = [
   {
@@ -25,39 +28,88 @@ const PROJECTS = [
       'A customizable phone case e-commerce platform with live design preview, Stripe checkout, secure auth and high-performance media pipeline.',
     bullets: [
       'Built end-to-end with Next.js App Router, Prisma & PostgreSQL.',
-      'Stripe integration, Kinde Auth, UploadThing for media — improved CVR.',
+      'Stripe integration, Kinde Auth, UploadThing for media \u2014 improved CVR.',
     ],
     stack: ['Next.js', 'Prisma', 'PostgreSQL', 'Tailwind', 'Stripe', 'Kinde', 'ShadCN', 'UploadThing'],
     accent: 'from-violet-500 via-fuchsia-500 to-pink-500',
-    href: 'https://github.com/NitinSingh07',
+    live: 'https://case-king.vercel.app/',
+    github: 'https://github.com/NitinSingh07/CaseKing',
   },
   {
     name: 'ProManage',
-    tag: 'SaaS · Productivity',
+    tag: 'SaaS \u00b7 Productivity',
     year: '2024',
     description:
-      'A full-featured project management suite with task tracking, team assignments, and Gantt visualisation — deployed at scale on AWS.',
+      'A full-featured project management suite with task tracking, team assignments, and Gantt visualisation \u2014 deployed at scale on AWS.',
     bullets: [
       'TypeScript + Redux + Express stack, hosted on EC2/RDS/S3/Amplify.',
-      'Cognito auth · ~40% improvement in operational efficiency.',
+      'Cognito auth \u00b7 ~40% improvement in operational efficiency.',
     ],
     stack: ['Next.js', 'Node.js', 'Express', 'TypeScript', 'Redux', 'AWS'],
     accent: 'from-sky-500 via-cyan-400 to-emerald-400',
-    href: 'https://github.com/NitinSingh07',
+    live: 'https://main.d35i2z1v1of9nl.amplifyapp.com/',
+    github: 'https://github.com/NitinSingh07/ProManage',
   },
   {
     name: 'She-Shield',
-    tag: 'Safety · Realtime',
+    tag: 'Safety \u00b7 Realtime',
+    year: '2024',
     description: "A real-time women's safety platform with live location tracking, nearby emergency services and instant alert notifications.",
     bullets: [
-      'Socket.io realtime alerts · Leaflet maps · OpenCage geocoding.',
-      'Crime mapping dashboards + community forum — +15% engagement.',
+      'Socket.io realtime alerts \u00b7 Leaflet maps \u00b7 OpenCage geocoding.',
+      'Crime mapping dashboards + community forum \u2014 +15% engagement.',
     ],
     stack: ['React', 'Express', 'Socket.io', 'Leaflet', 'JWT', 'Recharts', 'Framer Motion'],
     accent: 'from-rose-500 via-orange-400 to-amber-300',
-    href: 'https://github.com/NitinSingh07',
+    live: 'https://she-shield-eight.vercel.app/',
+    github: 'https://github.com/NitinSingh07/She-Shield',
   },
 ]
+
+const EXPERIENCE = [
+  {
+    company: 'Security Platform',
+    role: 'Software Engineering Intern',
+    period: '2025',
+    location: 'Remote',
+    bullets: [
+      'Spearheaded development of the Peer Comparison feature end-to-end, enabling 500+ organizations to benchmark security posture against industry peers using standardized security metrics \u2014 improving risk visibility by 30%.',
+      'Integrated automated PDF security report generation via a template engine and RESTful APIs.',
+      'Resolved 75+ production defects and daily bugs; performed label and UI optimizations to enhance usability, stability and reliability across live environments.',
+    ],
+    tags: ['REST APIs', 'PDF Engine', 'Production Bugs', 'UI Polish'],
+  },
+  {
+    company: 'BrandContext',
+    role: 'Frontend Development Intern',
+    period: 'Jun 2025 \u2014 Aug 2025',
+    location: 'Remote',
+    bullets: [
+      'Enhanced 5 dashboards for a real-time analytics platform in collaboration with Google \u2014 decreasing page load times by 25%.',
+      'Optimized interactive data visualization modules used by retail teams, reducing data load time by 40% and improving operational decisions across 100+ store locations.',
+    ],
+    tags: ['Analytics', 'Dashboards', 'Performance', 'Data Viz'],
+  },
+  {
+    company: 'Cograd',
+    role: 'Full Stack Development Intern',
+    period: 'Aug 2024 \u2014 Feb 2025',
+    location: 'Remote',
+    bullets: [
+      'Architected and delivered an ERP system for student onboarding, fee management, result processing, teacher onboarding, and geo-based attendance \u2014 improving workflow efficiency by 35%.',
+      'Contributed scalable features to a production-grade platform showcased on Shark Tank India Season 4 and assisted in real-world deployment readiness.',
+    ],
+    tags: ['Full Stack', 'ERP', 'Shark Tank India', 'Deployment'],
+  },
+]
+
+const EDUCATION = {
+  school: 'Indian Institute of Information Technology (IIIT) Una',
+  location: 'Una, Himachal Pradesh',
+  degree: 'B.Tech in Electronics and Communication Engineering',
+  cgpa: '8.2 / 10',
+  period: '2022 \u2014 2026',
+}
 
 const SKILLS = {
   Languages: ['C', 'C++', 'JavaScript', 'TypeScript', 'HTML5', 'CSS3'],
@@ -192,6 +244,17 @@ function Hero() {
   return (
     <section ref={ref} id="top" className="relative min-h-[100svh] overflow-hidden spotlight">
       < AuroraBackground />
+      {/* 3D scene anchored to the right */}
+      <div className="absolute inset-0 z-[1] pointer-events-none">
+        <div className="absolute right-[-6%] top-[18%] hidden lg:block h-[640px] w-[640px] opacity-90">
+          <HeroScene />
+        </div>
+        {/* Mobile small accent */}
+        <div className="absolute -top-10 right-0 lg:hidden h-[320px] w-[320px] opacity-70">
+          <HeroScene />
+        </div>
+      </div>
+
       <div className="relative z-10 mx-auto max-w-6xl px-6 pt-44 pb-32">
         < motion.div style={{ y, opacity }
         }>
@@ -202,7 +265,7 @@ function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/50 backdrop-blur px-3 py-1 text-xs font-mono text-muted-foreground"
           >
             <Sparkles className="h-3 w-3 text-violet-400" />
-            Available for full - time roles · 2025
+            B.Tech IIIT Una'26 - Open to full-time roles
           </motion.div >
 
           <motion.h1
