@@ -784,22 +784,21 @@ function Footer() {
 function ScrollZigZag() {
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme !== 'light'
-  
+
   const { scrollYProgress } = useScroll()
-  const pathLength = useSpring(scrollYProgress, { stiffness: 80, damping: 25 })
   const svgRef = useRef(null)
   const pathRef = useRef(null)
   const dotX = useMotionValue(0)
   const dotY = useMotionValue(0)
 
-  // Very spread out, wildly organic path — only 5 sweeps across the whole page
+  // Organic path that stays strictly within the 0 to 100 viewBox boundaries
   const path = [
     'M 50 0',
-    'C 110 30, -15 80, 92 150',
-    'C 120 200, -20 260, 8 350',
-    'C -10 420, 115 440, 85 550',
-    'C 110 620, -20 680, 12 750',
-    'C -25 830, 105 880, 50 1000',
+    'C 90 30, 10 80, 85 150',
+    'C 95 200, 5 260, 15 350',
+    'C 5 420, 95 440, 80 550',
+    'C 95 620, 5 680, 20 750',
+    'C 5 830, 95 880, 50 1000',
   ].join(' ')
 
   useEffect(() => {
@@ -807,13 +806,13 @@ function ScrollZigZag() {
     if (!pathEl) return
     const totalLen = pathEl.getTotalLength()
 
-    const unsubscribe = pathLength.on('change', (v) => {
+    const unsubscribe = scrollYProgress.on('change', (v) => {
       const pt = pathEl.getPointAtLength(v * totalLen)
       dotX.set(pt.x)
       dotY.set(pt.y)
     })
     return unsubscribe
-  }, [pathLength, dotX, dotY])
+  }, [scrollYProgress, dotX, dotY])
 
   // Theme-specific colors
   const stop1 = isDark ? "#fff3b0" : "#4f46e5" // gold vs sapphire
@@ -842,7 +841,7 @@ function ScrollZigZag() {
           d={path}
           stroke="url(#zigzag-grad)"
           strokeWidth="0.6"
-          style={{ pathLength }}
+          style={{ pathLength: scrollYProgress }}
           strokeLinecap="round"
         />
         <defs>
