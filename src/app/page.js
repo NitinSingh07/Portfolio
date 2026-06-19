@@ -8,7 +8,7 @@ import {
   Code2, Cloud, Database, Wrench, Palette, Layers, Zap, ArrowRight, ChevronRight, Briefcase, GraduationCap, ExternalLink
 } from 'lucide-react'
 
-const HeroScene = dynamic(() => import('@/components/hero-scene'), { ssr: false, loading: () => null })
+const TunnelBackground = dynamic(() => import('@/components/tunnel-background'), { ssr: false, loading: () => null })
 // ------------------------------ Data ------------------------------
 const NAV = [
   { label: 'Work', href: '#work' },
@@ -228,28 +228,17 @@ function AuroraBackground() {
 
 function Hero() {
   const ref = useRef(null)
-  useSpotlight(ref)
+  const { resolvedTheme } = useTheme()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const y = useTransform(scrollYProgress, [0, 1], [0, 120])
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
 
   return (
-    <section ref={ref} id="top" className="relative min-h-[100svh] overflow-hidden spotlight">
-      < AuroraBackground />
-      {/* 3D scene anchored to the right */}
-      <div className="absolute inset-0 z-[1] pointer-events-none">
-        <div className="absolute right-[-6%] top-[18%] hidden lg:block h-[640px] w-[640px] opacity-90">
-          <HeroScene />
-        </div>
-        {/* Mobile small accent */}
-        <div className="absolute -top-10 right-0 lg:hidden h-[320px] w-[320px] opacity-70">
-          <HeroScene />
-        </div>
-      </div>
+    <section ref={ref} id="top" className="relative min-h-[100svh] overflow-hidden">
+      <TunnelBackground theme={resolvedTheme} />
 
       <div className="relative z-10 mx-auto max-w-6xl px-6 pt-44 pb-32">
-        < motion.div style={{ y, opacity }
-        }>
+        <motion.div style={{ y, opacity }}>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -258,7 +247,7 @@ function Hero() {
           >
             <Sparkles className="h-3 w-3 text-violet-400" />
             B.Tech IIIT Una'26 - Open to full-time roles
-          </motion.div >
+          </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -267,7 +256,7 @@ function Hero() {
             className="mt-6 text-balance text-[clamp(2.75rem,8vw,7rem)] leading-[0.95] font-medium tracking-tight"
           >
             Nitin Pratap <span className="font-serif italic text-foreground/80">Singh</span>
-          </motion.h1 >
+          </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -277,7 +266,7 @@ function Hero() {
           >
             Software Engineer building <span className="text-foreground">delightful interfaces</span> at the
             intersection of design and engineering.Crafting fast, considered products with Next.js, TypeScript and a love for the details.
-          </motion.p >
+          </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -289,40 +278,37 @@ function Hero() {
               className="group inline-flex items-center gap-2 rounded-full bg-foreground text-background px-5 py-2.5 text-sm font-medium hover:opacity-90 transition">
               View selected work
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </a >
+            </a>
             <a href="#contact"
               className="inline-flex items-center gap-2 rounded-full border border-border/70 px-5 py-2.5 text-sm font-medium hover:bg-secondary transition">
               <Mail className="h-4 w-4" /> Get in touch
-            </a >
+            </a>
             <div className="ml-1 flex items-center gap-2 text-xs text-muted-foreground font-mono">
               <MapPin className="h-3.5 w-3.5" /> India · Open to remote
-            </div >
-          </motion.div >
+            </div>
+          </motion.div>
 
           {/* Stat strip */}
-          < motion.div
-            initial={{ opacity: 0, y: 30 }
-            }
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.6 }}
             className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-px rounded-2xl overflow-hidden border border-border/60 bg-border/60"
           >
-            {
-              [
-                { k: '3', v: 'Internships Completed' },
-                { k: '15+', v: 'Projects shipped' },
-                { k: 'AWS', v: 'EC2 · RDS · S3' },
-                { k: '∞', v: 'Cups of chai' },
-              ].map((s) => (
-                <div key={s.v} className="bg-background/80 backdrop-blur-sm p-5">
-                  <div className="text-2xl md:text-3xl font-medium tracking-tight">{s.k}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{s.v}</div>
-                </div >
-              ))
-            }
-          </motion.div >
-        </motion.div >
-      </div >
+            {[
+              { k: '3', v: 'Internships Completed' },
+              { k: '15+', v: 'Projects shipped' },
+              { k: 'AWS', v: 'EC2 · RDS · S3' },
+              { k: '∞', v: 'Cups of chai' },
+            ].map((s) => (
+              <div key={s.v} className="bg-background/80 backdrop-blur-sm p-5">
+                <div className="text-2xl md:text-3xl font-medium tracking-tight">{s.k}</div>
+                <div className="text-xs text-muted-foreground mt-1">{s.v}</div>
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </div>
 
       {/* Scroll indicator */}
       < motion.div
@@ -340,19 +326,31 @@ function Hero() {
 
 function MarqueeRow() {
   return (
-    <div className="relative overflow-hidden border-y border-border/60 py-6 bg-background">
-      <div className="flex w-max animate-marquee gap-12 pr-12">
+    <div className="relative overflow-hidden py-10 bg-transparent">
+      <div className="flex w-max animate-marquee-slow gap-6 pr-6">
         {
           [...MARQUEE, ...MARQUEE].map((t, i) => (
-            <span key={i} className="font-serif text-3xl md:text-5xl text-foreground/40 hover:text-foreground transition-colors">
-              {t} <span className="text-violet-400/60">✦</span>
-            </span>
+            <motion.span
+              key={i}
+              animate={{
+                y: [0, -6, 0],
+              }}
+              transition={{
+                duration: 4 + (i % 4) * 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: (i % 3) * 0.5
+              }}
+              className="px-4 py-2 rounded-full border border-indigo-500/10 dark:border-amber-500/15 bg-indigo-500/5 dark:bg-amber-950/10 backdrop-blur-md text-xs md:text-sm font-mono text-indigo-950/80 dark:text-amber-200/80 hover:border-indigo-500/30 dark:hover:border-amber-400 hover:text-indigo-950 dark:hover:text-amber-100 hover:shadow-[0_0_20px_rgba(99,102,241,0.12)] dark:hover:shadow-[0_0_20px_rgba(251,180,42,0.18)] transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+            >
+              {t} <span className="text-indigo-500/80 dark:text-amber-400/80 animate-pulse">✦</span>
+            </motion.span>
           ))
         }
-      </div >
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent" />
-    </div >
+      </div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent" />
+    </div>
   )
 }
 
@@ -784,6 +782,9 @@ function Footer() {
 }
 
 function ScrollZigZag() {
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme !== 'light'
+  
   const { scrollYProgress } = useScroll()
   const pathLength = useSpring(scrollYProgress, { stiffness: 80, damping: 25 })
   const svgRef = useRef(null)
@@ -814,6 +815,12 @@ function ScrollZigZag() {
     return unsubscribe
   }, [pathLength, dotX, dotY])
 
+  // Theme-specific colors
+  const stop1 = isDark ? "#fff3b0" : "#4f46e5" // gold vs sapphire
+  const stop2 = isDark ? "#ffb52a" : "#7c3aed" // amber vs violet
+  const stop3 = isDark ? "#ff5e8a" : "#60a5fa" // rose vs sky-blue
+  const dotColor = isDark ? "#ffb52a" : "#7c3aed"
+
   return (
     <div className="fixed inset-0 pointer-events-none z-[1]">
       <svg
@@ -840,9 +847,9 @@ function ScrollZigZag() {
         />
         <defs>
           <linearGradient id="zigzag-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.5" />
-            <stop offset="50%" stopColor="#d946ef" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.3" />
+            <stop offset="0%" stopColor={stop1} stopOpacity="0.5" />
+            <stop offset="50%" stopColor={stop2} stopOpacity="0.4" />
+            <stop offset="100%" stopColor={stop3} stopOpacity="0.3" />
           </linearGradient>
         </defs>
         {/* Glowing dot */}
@@ -850,10 +857,10 @@ function ScrollZigZag() {
           cx={dotX}
           cy={dotY}
           r="2.5"
-          fill="#d946ef"
+          fill={dotColor}
           filter="url(#glow)"
         />
-        <motion.circle cx={dotX} cy={dotY} r="1" fill="white" />
+        <motion.circle cx={dotX} cy={dotY} r="1" fill={isDark ? "white" : "#ffffff"} />
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="2.5" result="blur" />
